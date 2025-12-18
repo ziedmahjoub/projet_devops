@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "ziedmahjoub/monapp"
+        IMAGE_NAME = "dockerhub_ziedmahjoub/monapp"
         IMAGE_TAG = "latest"
     }
 
