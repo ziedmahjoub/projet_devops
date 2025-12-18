@@ -1,24 +1,31 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'M2_HOME'
-        jdk 'JAVA_HOME'
+    environment {
+        IMAGE_NAME = "dockerhub_ziedmahjoub/monapp"
+        IMAGE_TAG = "latest"
     }
 
     stages {
-        stage('Clone repository') {
+
+        stage('Build Docker Image') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/ziedmahjoub/projet_devops.git'
+                echo "Construction de l'image Docker..."
+                script {
+                    docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+                }
             }
         }
-        
-       stage('Build') {
-    steps {
-        sh 'mvn clean package -DskipTests'
-    }
-}
 
+        stage('Push Docker Image') {
+            steps {
+                echo "Push de l'image vers Docker Hub..."
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-cred') {
+                        docker.image("${IMAGE_NAME}:${IMAGE_TAG}").push()
+                    }
+                }
+            }
+        }
     }
 }
